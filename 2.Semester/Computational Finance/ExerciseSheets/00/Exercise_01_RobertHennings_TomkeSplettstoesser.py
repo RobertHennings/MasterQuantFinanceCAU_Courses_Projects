@@ -6,7 +6,7 @@
 # Student ID: 
 
 # Name: Robert Hennings
-# Student ID: 1169810
+# Student ID: 
 
 import math
 
