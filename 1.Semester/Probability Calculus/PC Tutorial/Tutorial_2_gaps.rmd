@@ -1,0 +1,164 @@
+---
+title: "Tutorial 2 - Introduction to R"
+author: "Lukas Baumann, Rouven Lindenau, Mariia Okuneva"
+output:
+  html_notebook: default
+  pdf_document: default
+---
+
+# Logical statements
+ 
+Basic operators to compare statements:
+
+* equality: `==`
+* greater than, greater than or equal to, less than, less than or equal to: `>`, `>=`, `<` and `<=`
+* no equality: `!=`
+* logical and: `&` and `&&`
+* logical or: `|` and `||`
+
+```{r}
+
+```
+
+Let's use logical statements to compare two vectors consisting of 0s and 1s.
+
+```{r}
+
+```
+
+In a logical statement 0 stands for FALSE, and 1 stands for TRUE.
+
+```{r}
+
+```
+
+
+`all()` - tests whether all values are true
+
+`any()` - tests whether any values are true
+
+`which()` - returns the indices of a vector (or matrix) for which a condition is true
+```{r}
+
+```
+
+# Conditional Statements
+
+```R
+if(condition) {
+  statement1
+} if (condition2) {
+  statement2
+} else {
+  statement3
+}
+
+if(condition) {
+  statement1
+} else if (condition2) {
+  statement2
+} else {
+  statement3
+}
+```
+
+We have always the signal word (if or else) followed by the condition (note the brackets!) and the statement, i.e. the actual calculation for this condition (note the curly brackets!).
+
+```{r}
+
+```
+
+Here we write a function that outputs "x is negative" if an input is a negative number, "x is positive" if an input is a positive number, and "x is zero" otherwise.
+
+```{r}
+
+```
+
+To output which number is negative, zero, or positive, use the function `paste` we discussed last time.
+
+```{r}
+
+```
+# Matrices
+
+`matrix()` constructs a matrix, important arguments:
+
+* `data` - the entries of the matrix (a vector)
+* `nrow` and `ncol` - number of rows and columns
+* `byrow` - matrix is filled by rows (or columns)
+
+The matrix is filled by columns.
+
+```{r}
+
+```
+
+`dim()` - returns the dimension of an object
+```{r}
+
+```
+
+`rbind(X, a)` and `cbind(X, a)` - adds to X the vector a either by row or column
+```{r}
+
+```
+
+`rownames(X)` and `colnames(X)` - returns the row- or column names of a matrix
+
+```{r}
+
+```
+
+Selection of elements and submatrices:
+
+```{r}
+
+```
+Some operations on matrices.
+
+```{r}
+
+```
+
+
+# Loops
+Whenever something has to be repetitively executed the most basic procedure to solve such a task is a so called *loop*. Loops are just designed to repeatedly execute (similar) expressions. In R two basic types of loops exist: 1. the so called *"for"* loop and 2. the *"while"* loop (to be more precise there exist a third option: repeat loop, but this behaves pretty much like the while loop). The for loop is easier to handle, therefore we begin with that. You might have a look at the help page. The syntax for a for loop is quiet similar to that for 'if' statements.
+
+```R
+while(condition){
+  statement
+}
+```
+
+```R
+for(variable in sequence){
+  statement
+}
+```
+Suppose that we want to calculate the mean of the variable a without using the *mean()* function. 
+
+```{r}
+
+```
+
+First, we use the built-in function *mean()* to find the mean of all elements of the vector a. Then we use the for loop to arrive at the same result. We need at first some condition based on an index (in our example called i) how often (and for which 'values') something has to be calculated. Since we want to calculate the mean of any vector x we start with the first element x[1] and end with the last one, therefore we used the *length()* function. After each step the index is increased by 1. The calculation looks a little bit strange from a mathematical perspective because the equality *sum = sum +x[i]* almost never holds. But remember that R calculates the right hand side (in the first step 0 + 1) and saves the result in the already existing variable sum. This procedure is very often useful. Start with a variable set to 0 and calculate something based on this variable. Save the result in the variable again. Don't forget to divide the sum by the number of elements in the vector x to get the mean. 
+
+The second type of loops are the so called while loops. The syntax is similar to the for loop with a main difference. The statement within the **{}**-brackets is executed as long as the condition in the round brackets **()** is true! This yields a major problem because the condition may be always true, therefore the while loop will never stop (infinite loop)!!! 
+
+Again calculate the mean of a:
+
+```{r}
+
+```
+
+To ensure that the while loop will stop we have to increase the index i within the loop.  
+
+Loops are relatively easy to use, unfortunately they are relatively slow. If you are running for example larger simulations it might pay off to use vectorized commands or functions instead of loops to save a lot of computation time.
+
+Use the loop to create an identity matrix.
+
+```{r}
+# Loops and matrices
+
+```
+

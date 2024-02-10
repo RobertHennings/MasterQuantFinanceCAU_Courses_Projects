@@ -1,0 +1,261 @@
+---
+title: "Introduction to R: Problems"
+output: html_notebook
+---
+
+# Numbers, vectors and basic functions
+2.1 Create a vector "prob" with 50 elements which has the following form $prob = \begin{pmatrix} 1 & 4 & 9 & 16 & \cdots\end{pmatrix}$. 
+
+```{r}
+prob = seq(from=1, to=50, by=1)
+prob = prob^2
+print(prob)
+```
+
+
+2.2 Calculate the scalarproduct for the vector prob with itself.
+
+```{r}
+prob_scalar = prob%*%prob
+print(prob_scalar)
+```
+
+
+2.3 Take the square root of the vector prob and add this to this vector. How can you obtain the same result? Test whether the difference is indeed 0.
+
+```{r}
+prob_sqrt = sqrt(prob)
+prob_transform1 = prob + prob_sqrt
+prob_transform2 = prob + seq(from=1, to=50, by=1)
+identical(prob_transform1, prob_transform2)
+```
+
+
+2.4 Construct another vector "alphabet" consisting of characters. To this end use the build in variable letters. Can you add the vectors alphabet and prob? Why or why not? Set up a logical vector "logi"  and use it instead of alphabet. What can you conclude?
+
+```{r}
+alphabet = letters
+print(alphabet)
+
+# Test prob + alphabet
+# prob + alphabet # Afterwards, delete this line or turn it into a comment to continue
+logi = rep(c(TRUE, FALSE), 25)
+prob + logi
+```
+You cannot add a vector of whose elements are character type ones to a numeric vector. Additionally, the dimensions would not match.
+Assuming that logi has the same length as prob, TRUE is interpreted as 1 while FALSE is treated as 0.
+
+
+2.5 Find the minimal and maximal value as well as the sum and the range of the vector zeta. In addition use the function \emph{summary()}.
+
+```{r}
+zeta = rnorm(1000)
+zeta_min = min(zeta)
+zeta_max = max(zeta)
+zeta_sum = sum(zeta)
+zeta_mean = mean(zeta)
+zeta_range = range(zeta)
+print(paste("zeta_min: ", zeta_min))
+print(paste("zeta_max: ", zeta_max))
+print(paste("zeta_sum: ", zeta_sum))
+print(paste("zeta_mean: ", zeta_mean))
+print(paste("zeta_range: min =", zeta_range[1], ", max =", zeta_range[2], ", difference = ", zeta_range[2]-zeta_range[1]))
+
+summary(zeta)
+
+
+```
+
+
+2.6 Extract now the minimal and maximal values of the vector zeta and save these in the variables min and max. Additionally count how many times you obtained a value smaller than 0. How many datapoints are in the interval from -1 to 1?
+
+```{r}
+min = zeta_min
+max = zeta_max
+smaller_zero = sum(zeta < 0)
+minus_one_to_one = sum(zeta >= -1 & zeta <= 1)
+print(paste("No. of elements < 0: ", smaller_zero))
+print(paste("No. of elements -1 < zeta < 1: ", minus_one_to_one))
+```
+
+
+2.7 Construct a numeric variable "threshold" with any number you like. Exclude all elements of the vector zeta that are greater than your threshold value. Repeat this procedure with different threshold values.
+
+```{r}
+zeta_sort = sort(zeta)
+zeta_threshold = zeta[zeta >=  -1 & zeta <= 1]
+range(zeta_threshold)
+length(zeta_threshold)
+```
+
+
+# Logical statements, loops and matrices.
+4.1 Use a for-loop to calculate the mean of the vector zeta. Test whether your result is correct. Repeat this using a while-loop.
+
+```{r}
+# Create some vector zeta of length n
+n = 1000
+# zeta = rnorm(n)
+
+# Calculate the mean of zeta using a for loop
+mean_for = 0
+for (i in 1:n){
+  mean_for = zeta[i]/n + mean_for
+}
+# Test the calculation
+identical(mean_for, mean(zeta))
+
+# Calculate the mean of zeta using a while loop
+i = 1
+mean_while = 0
+while (i <= n){
+  mean_while = zeta[i]/n + mean_while
+  i = i+1
+}
+identical(mean_while, mean(zeta))
+```
+
+
+4.2 Write a function to calculate the double factorial $n!! = \prod\limits_{k=0}^{\lceil \frac{n}{2} \rceil - 1}(n-2k)$ of an integer using a for- or while-loop. Check within the function whether the integer is not negative, if not return an error message. Hint: The function _ceiling()_ might be useful.
+
+```{r}
+doubleFac = function(n){
+  # Inputs:
+  #   n: Positive integer
+  # Outputs:
+  #   res: res = n!!
+  
+  if (n > 0){
+    prod = 1
+    for (k in seq(0, ceiling(n/2)-1)){
+      prod = prod*(n-2*k)
+    }
+    return(prod)
+  }
+  else if (n == 0){
+    return(1)
+  }
+  else if (n < 0){
+    return("n must be positive!")
+  }
+}
+doubleFac(-1)
+doubleFac(0)
+doubleFac(9)
+```
+
+
+4.3 Write a function to calculate the greatest common divisor for two positive integers using a while loop. To this end use the euclidean algorithm. Check within the function whether the integers are positive, if not return an error message. Hint: y modulus x is _y%%x_ in R.
+
+```{r}
+gcd = function(a, b){
+  # Inputs
+  #   a, b: Positive numbers
+  # Outputs
+  #   d: Greatest common divisor of a and b
+  
+  # Euclid's Algorithm
+  d = 1
+  if ((a>0) & (b>0)){
+    while(b != 0){
+      t = b
+      b = a%%b
+      a = t
+    }
+    d = a
+    return(d)
+  }
+  else{
+    return("At least one number is not positive.")
+  }
+}
+
+gcd(5,2)
+gcd(2,4)
+gcd(-2,5)
+```
+
+
+4.4 Use the vectors a1 and b1 to verify both DeMorgan's laws. Do not forget to test the result!
+
+```{r}
+a1 = rbinom(n = 10000, size = 1, prob = 0.5)
+b1 = rbinom(n = 10000, size = 1, prob = 0.5)
+all(!(a1|b1)==((!a1)&(!b1))) 
+all(!(a1&b1)==((!a1)|(!b1)))
+```
+
+
+4.5 Write a procedure to obtain the smallest value in the vector zeta. Use a for- or while-loop. Compare your procedure to the function _min()_.
+
+```{r}
+# Test vector
+zeta = rnorm(1000)
+
+# Create a function
+min_vec = function(x){
+  # Inputs
+  #   x: some vector
+  # Outputs
+  #   res: Minimum of vector x
+  
+  n = length(x)
+  res = x[1]
+  for (i in 2:n){
+    if (x[i] < res){
+      res = x[i]
+    }
+  }
+  return(res)
+}
+# Test the function and compare the result to min(zeta)
+min_vec(zeta)
+identical(min_vec(zeta), min(zeta))
+```
+
+4.6 Write a function that creates an $n\times n$ identity matrix using for- or while-loops. n is the only argument of this function.
+
+```{r}
+identity = function(n){
+  # Inputs:
+  #   n: Dimension of the square identity matrix
+  # Outputs:
+  #   nxn identity matrix
+  
+  iden = matrix(0, nrow=n, ncol=n)
+  for (i in 1:n){
+    iden[i, i]=1
+  }
+  return(iden)
+}
+identity(2)
+identity(10)
+```
+
+4.7 Write a function that creates an $n\times n$ matrix of the following form $\begin{pmatrix} 1 & 2 & 3 & \cdots & n\\ 2 & 2 & 3 & \cdots & n\\ 3 & 3 & 3 & \cdots & n\\ \vdots & \vdots & \vdots & \ddots & \vdots\\ n & n & n & \cdots & n\end{pmatrix}$. n is the only argument of this function.
+
+```{r}
+mat = function(n){
+  # Inputs:
+  #   n: Dimension of the matrix
+  # Output
+  #   mat_res: nxn matrix
+  
+  mat_res = matrix(0, nrow=n, ncol=n)
+  for (i in 1:n){
+    for (j in 1:n){
+      if (i >= j){
+        mat_res[i, j] = i
+      }
+      else{
+        mat_res[i, j] = j
+      }
+    }
+  }
+  return(mat_res)
+}
+
+# mat()
+mat(5)
+mat(10)
+```

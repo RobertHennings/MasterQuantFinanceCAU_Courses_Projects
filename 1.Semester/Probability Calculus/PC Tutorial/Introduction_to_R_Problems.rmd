@@ -1,0 +1,98 @@
+---
+title: 'Introduction to R: Problems'
+output: html_notebook
+---
+
+# Numbers, vectors and basic functions
+2.1 Create a vector "prob" with 50 elements which has the following form $prob = \begin{pmatrix} 1 & 4 & 9 & 16 & \cdots\end{pmatrix}$. 
+
+```{r}
+
+```
+
+
+2.2 Calculate the scalarproduct for the vector prob with itself.
+
+```{r}
+
+```
+
+
+2.3 Take the square root of the vector prob and add this to this vector. How can you obtain the same result? Test whether the difference is indeed 0.
+
+```{r}
+
+```
+
+
+2.4 Construct another vector "alphabet" consisting of characters. To this end use the build in variable letters. Can you add the vectors alphabet and prob? Why or why not? Set up a logical vector "logi"  and use it instead of alphabet. What can you conclude?
+
+```{r}
+
+```
+
+
+2.5 Find the minimal and maximal value as well as the sum and the range of the vector zeta. In addition use the function \emph{summary()}.
+
+```{r}
+zeta = rnorm(1000)
+```
+
+
+2.6 Extract now the minimal and maximal values of the vector zeta and save these in the variables min and max. Additionally count how many times you obtained a value smaller than 0. How many datapoints are in the interval from -1 to 1?
+
+```{r}
+
+```
+
+
+2.7 Construct a numeric variable "threshold" with any number you like. Exclude all elements of the vector zeta that are greater than your threshold value. Repeat this procedure with different threshold values.
+
+```{r}
+
+```
+
+
+# Logical statements, loops and matrices.
+4.1 Use a for-loop to calculate the mean of the vector zeta. Test whether your result is correct. Repeat this using a while-loop.
+
+```{r}
+
+```
+
+
+4.2 Write a function to calculate the double factorial of an integer using a for- or while-loop. Check within the function whether the integer is not negative, if not return an error message. Hint: The function _ceiling()_ might be useful.
+
+```{r}
+
+```
+
+
+4.3 Write a function to calculate the greatest common divisor for two positive integers using a while loop. To this end use the euclidean algorithm. Check within the function whether the integers are positive, if not return an error message. Hint: y modulus x is _y%%x_ in R.
+
+```{r}
+
+```
+
+
+4.4 Use the vectors a1 and b1 to verify both DeMorgan's laws. Do not forget to test the result!
+
+```{r}
+a1 = rbinom(n = 10000, size = 1, prob = 0.5)
+b1 = rbinom(n = 10000, size = 1, prob = 0.5)
+```
+
+
+4.5 Write a procedure to obtain the smallest value in the vector zeta. Use a for- or while-loop. Compare your procedure to the function _min()_.
+
+```{r}
+zeta = rnorm(1000)
+```
+
+4.6 Write a function that creates an $n\times n$ identity matrix using for- or while-loops. n is the only argument of this function.
+
+```{r}
+
+```
+
+4.7 Write a function that creates an $n\times n$ matrix of the following form $\begin{pmatrix} 1 & 2 & 3 & \cdots & n\\ 2 & 2 & 3 & \cdots & n\\ 3 & 3 & 3 & \cdots & n\\ \vdots & \vdots & \vdots & \ddots & \vdots\\ n & n & n & \cdots & n\end{pmatrix}$. n is the only argument of this function.

@@ -1,0 +1,257 @@
+---
+title: "Tutorial 1 - Introduction to R"
+author: "Lukas Baumann, Rouven Lindenau, Mariia Okuneva"
+output: html_notebook
+---
+
+# Preliminaries
+
+This is a short introduction/reminder into the basics of R. We will have a look at the syntax, some basic objects and functions of R. The great advantage of R is that it is free, easy to understand/use and very powerful (on the other hand it is slower than some other software packages). Therefore it is used by many people especially in academia all over the world and its user base is still growing. In fact its huge user base is a great advantage, too. Especially for beginners, since it allows you to write and share programs for specific tasks.
+
+# R and RStudio
+
+* R is the name of the programming language designed for statistical computing and graphics, RStudio is a convenient interface/editor/IDE (integrated development environment). 
+
+* We write all the commands in this script window and send them to the console. To clear console use Ctrl + L. To create a chunk, click on 'Insert a new Code chunk'. To run the chunk, use the 'Run' button. To run a certain line within the chunk, select the line and press Ctrl + Enter.
+
+* You can also execute all the commands in console directly, but the commands will not be saved.
+
+# Basic commands
+
+To change the working directory, use `setwd("your/own/path")`.
+
+```{r}
+setwd("X:/Doctor/Stat1/tutorials 2022-2023/PC Tutorials") # your path here!
+```
+
+To display at which directory R is currently pointed, use `getwd()`. This function has no arguments.
+
+```{r}
+getwd()
+```
+
+```{r}
+1+2
+```
+* You can save the result of your calculations in a variable.
+
+```{r}
+x = 1+2
+x
+```
+* In this case, you will see a variable x in the 'Environment' window/list. Other objects like matrices, dataframes or functions will be displayed there too.
+
+* To create a new Script or Notebook file, click on 'New File' -> 'R Notebook'. All the commands and comments are saved there which makes it easy to share your projects (like your home assignment) with others.
+
+* To save the Notebook, use 'Save' button or Ctrl+S.
+
+* In the lower-right corner, we have the Window with Plots, Packages, and Help.
+
+The name of the variable is always on the left, the statement you would like to save on the right. We use **"="** or **"<-"** to assign something to a variable name. Note that there are certain rules for variable names: It has to begin with a letter, special characters are (mostly) not allowed and certain names as *TRUE* or *FALSE* are reserved for R commands or functions. If you use the same name for a variable twice you overwrite the content of the former. R is case sensitive!
+
+```{r}
+x = 1+2
+X <- 1+2
+x
+X
+x=2*4
+x
+```
+
+It should not surprise you that for many problems you might think of or encounter later on, a solution already exists somewhere (Google is your best friend!). To use these programs of others you will need to install certain so-called packages. For this purpose R offers the function **install.packages("???")** [Note the quotes!]. To be able to use these packages in your session you have to use the command **library(???)**. The installation of a certain package is only needed once, the call to the library every time you restart R! 
+
+To make things work you have to first install the five packages and activate them.
+
+```{r}
+install.packages("rmarkdown")
+install.packages("formatR")
+install.packages("caTools")
+install.packages("knitr")
+install.packages("rprojroot")
+library(rmarkdown)
+library(formatR)
+library(caTools)
+library(knitr)
+library(rprojroot)
+```
+Especially in the beginning a very useful function is the help. You can open it in R by typing **help(???)**.
+
+```{r warning=FALSE, error=TRUE}
+# Call the help page of the command help
+help(help)
+?library
+```
+
+
+# Vectors and basic functions
+The most basic R object to save data - which is called data structure - is a vector. A vector is easy to construct via the function **c(???)**. 
+
+```{r   warning=FALSE, error=TRUE}
+vec = c(3, 5, 7, 9, 11, 13, 15)
+vec
+?c
+```
+
+Sometimes this takes time to type out therefore another useful function to create a vector based on a certain pattern is **seq(???)**. Any function in R has a name - e.g. **"seq"** - and round brackets **"()"**, pretty much like in mathematics. The *???* are called arguments. If you have a look at the help page of the function **seq()**
+
+```{r   warning=FALSE, error=TRUE}
+help(seq)
+```
+
+you will notice that this is structured in different parts which are very typical for (most) help pages of functions. First a description what the function is intended to do, the explanation of the syntax (Usage) followed by a list of potential arguments and at the very end you find very often some examples to illustrate the usage. 
+
+Try to create the same vector as in the previous part using the function **seq()**.
+
+```{r   warning=FALSE, error=TRUE}
+vec2 = seq(from = 3, to = 15, by = 2)
+vec2
+View(as.matrix(vec2))
+```
+```{r}
+x = 5*3
+vec2 = seq(from = 3, to = x, by = 2)
+vec2
+```
+
+Most arguments of any function have a name. It is good practice to specify the name of the argument you would like to use. The order of the arguments matter, e.g. for the function **seq()** the first argument *from* is the starting point, the second one *to* the end point of the sequence. Arguments are always separated by a comma. You will also notice that the argument *from* has a so called default value (which is 1 in this case). This implies if you do not specify this argument it will take the value 1 (this is sometimes very useful, especially if you write your own functions). 
+
+Create a sequence of integers starting at 1 ending at 10 by specifying all arguments (with names). 
+
+```{r   warning=FALSE, error=TRUE}
+s = seq(from = 1, to = 10, length.out = 10)
+s2 = seq(from = 1, by = 1, length.out = 10)
+s3 = seq(from = 1, length.out = 10, by = 1)
+# Use the names of the arguments to make your code easily readable.  
+s4 = seq(1, 10, 1)
+s
+s2
+s3
+s4
+```
+
+Note that the hash tag (\#) can be used in R scripts to make comments. Comments are just for the reader of the code and will not be executed by R. A good program should include comments where the code is explained. This is not only important for other users of your code but also for yourself because projects might become fairly large or you might work a long time on a given project.
+
+```{r}
+# Another syntax to create a sequence of integers starting at 1 ending at 10
+s4 = 1:10
+s4
+```
+
+Sometimes you may be interested in certain subsets of a given vector. In R this is possible by specifying the name and the index number of the elements you are interested in, e.g. *vec[1:3]* which extracts the first three elements of the vector vec. 
+
+How can you obtain the elements 2 to 5 and 7 of the vector vec?
+
+```{r   warning=FALSE, error=TRUE}
+vec
+vec[1]
+vec[1:3]
+vec[c(2:5,7)]
+indices = c(2:5,7)
+vec[indices]
+vec[-(1:2)]
+```
+
+Notice that if you would like to obtain elements of a vector (or later any data structure) you have to use rectangular brackets **"[]"**, if you would like to call a function always round brackets **"()"**. You can exclude certain elements of a vector with a minus, e.g. *vec[-(2:5)]*.
+
+```{r}
+# number of elements
+length(vec)
+# replicate data
+?rep
+rep(vec, times=5)
+```
+
+A very important difference to some other programming languages is that R will manipulate (numeric) vectors element wise. For example the scalar product of two vectors a and b of the same length *<a,b>* is typically *ab* but not in R!
+
+Construct two numeric vectors a and b with the same number of elements (n = 4) and multiply them
+
+```{r   warning=FALSE, error=TRUE}
+a = c(1,2,3,4)
+b = c(5,6,7,8)
+a*b           # elementwise
+a%*%b         # scalar product
+```
+
+In some applications this is very useful in other applications you really have to think hard how to translate element wise manipulations of a vector to your desired outcome. If you multiply (divide, ...) vectors of different length the shorter vector will be recycled automatically. Note that if the length of the shorter is an exact multiple of the larger vector you will not even get an error message, otherwise only a warning.  
+
+# Writing functions
+
+R is a functional language which means almost everything is a function (besides data of course). It is highly recommended to use this mind-set, too. Thus if you have to implement a new procedure for a given task, analyzing data or running a simulation you might write your own function that does exactly this. Typically this is not one big function but a function that makes use of other functions (which you also have written for this purpose). The goal for almost any larger project is to disaggregate this project into smaller parts that can be handled separately (maybe with some dependency between those) and write a function for each sub-part.  
+
+Now let's write our first function. You need several things to define a function. A name, some arguments or variables that the function may use and of course a procedure. The syntax is as follows:
+
+```{r   warning=FALSE, error=TRUE}
+name = function(argument1, argument2, argument3 = a,...){
+  procedure
+  return(result)
+}
+```
+
+Note that the third argument has a default value, i.e. a value which is used whenever nothing is specified for this argument by the user. 
+
+```{r}
+myfirstfunction = function(){
+  return("Hello World")
+}
+
+myfirstfunction()
+```
+```{r}
+mysecondfunction = function(y){
+  return(y)
+}
+
+mysecondfunction('Hello World')
+mysecondfunction(7)
+```
+
+```{r}
+mythirdfunction = function(y = "Hello World"){
+  return(y)
+}
+
+mythirdfunction()
+mythirdfunction(7)
+```
+
+```{r}
+myfourthfunction = function(x,y){
+  return(c(x,y))
+}
+
+myfourthfunction('Hello', 'World')
+```
+```{r}
+myfourthfunction = function(x,y){
+  # z is a local variable
+  z = c(x,y)
+  return(z)
+}
+
+myfourthfunction('Hello', 'World')
+```
+
+```{r}
+myfourthfunction = function(x,y){
+  # z is a local variable
+  z = paste(x,y)
+  return(z)
+}
+
+myfourthfunction('Hello', 'World')
+```
+
+Try writing a function that calculates the mean of any numerical vector. Use the functions **sum()** and **length()** for this purpose. Test this function with the vector a you defined earlier.
+
+```{r   warning=FALSE, error=TRUE}
+our_mean = function(y){
+  result = sum(y)/length(y)
+  return(result)
+}
+
+our_mean(a)
+identical(our_mean(a), mean(a))
+```
+
+We calculated the mean by summing up all elements of the variable a and divide the sum by the number of elements. The word function is the signal word for R that a function is defined. Note that we used only one argument y. The variable y is called a local variable because it exists only in our function but not in any other environment (have a look at the upper right)! Local variables are "forgotten" whenever the procedure was executed. Sometimes one uses the same names for local and global variables or arguments. You need to be able to distinguish between them. 
+

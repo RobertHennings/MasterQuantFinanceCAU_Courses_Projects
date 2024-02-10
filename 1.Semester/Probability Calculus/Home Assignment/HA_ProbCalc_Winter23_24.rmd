@@ -1,0 +1,290 @@
+---
+title: "HA_Prob_Calc_Winter23_24"
+author: "Rouven Lindenau"
+date: "2024-01-22"
+output: html_document
+---
+---
+title: "Home Assignment, Probability Calculus 2023/2024"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+
+# Procedure
+- Try to solve this home assignment and answer all questions in this file by filling the boxes below each exercise
+```{r}
+# Example Code here
+print("It works!")
+```
+- You are not allowed to use any additional R packages (this means packages that you have to install additionally to those already installed by default). 
+- You can work in groups of up to 5 students. 
+- Hand in your solution (as a Rmd file!) via [e-mail] (l.baumann@stat-econ.uni-kiel.de) and (rl@stat-econ.uni-kiel.de) until Sunday, 11.02.2024, 23:59:59. 
+- Make sure to include all names and stu-numbers in your mail and in the header of this file!
+- We won't evaluate your assignment if your code is not running!
+- Add some comments to your code lines so people can understand your code more easily.
+- We might ask you to explain your code if we suspect that you did not write it on your own.
+
+
+!!! Enter your group name and stu-numbers here !!!
+
+1 Marque Mollenhauer, stu227420
+2 Eric Kroll, stu243616
+3 Josef Fella, stu245231
+4 Robert Hennings, stu236320
+5 Ahsan Muhammad, stu243716
+
+!!! Enter your group name and stu-numbers here !!!
+
+_______________________________________________________________________________________________________________
+#1. a) Exercise: Password generator (3 Points)
+
+You are asked to write a function that creates random passwords. The function must have two arguments:
+1. length - number of symbols used in the password, it should be 4 by default if no value is specified.
+2. special - a TRUE/FALSE boolean that is TRUE if special characters like "$" are included, it should be TRUE by default, if no value is specified.
+
+The password can be made of 
+- lower case letters, "a", "b",...,"z" (there are 26 possibilities)
+- upper case letters, "A", "B",...,"Z" (there are 26 possibilities)
+- numbers, "0", "1",...,"9" (there are 10 possibilities)
+- and (if allowed) special characters which are: "$", "%", "&", "/", "(", ")" (there are 6 possibilities)
+
+Further, the password is supposed to have at least one of each: lower case letter, upper case letter, number and if allowed special character. 
+Apart from that, at each position the password should have an equal probability to draw one of the 68 symbols (62 if special characters not allowed).
+
+Additionally, 
+3. If "length" in the function argument is less than 4, return: "Password must be at least of length 4!"
+4. If "length" in the function argument is not an integer, return: "Number of symbols must be a positive integer!"
+
+Last,
+5. If length of the password is <6, the function should print: "Weak password!"
+6. If length of the password is >6 and <10, the function should print: "Moderate password!"
+7. If length of the password is >10, the function should print: "Strong password!"
+
+8. The function should return the password as one single character, i.e. merging the drawn symbols in one character.
+
+Make sure your function fulfills all needed conditions by testing a few variations!
+
+```{r}
+# Write your function here, Conditions 1) and 2)
+get_password <- function(length=4, special=TRUE){
+  options(warn=-1)
+  # Test for type of provided argument - taken from the R help directly
+  # see help page for integer, bottom part
+  is.wholenumber <-
+    function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
+  # Test for length of length var - Condition 3)
+  if (length < 4) {
+    return("Password must be at least of length 4!")
+  }
+  # Test for datatype of argument - Condition 4)
+  if (is.wholenumber(length)==F){
+    return("Number of symbols must be a positive integer!")
+  }
+  # at least one lower, upper, number, if allowed special work with modulo operator
+  # and distribute the rest across the symbol categories to draw from
+  specials <- c("$", "%", "&", "/", "(", ")")
+  numbers <- 0:9
+  all_symbols <- c(LETTERS, letters, numbers)
+  # Always draw the standard symbols
+  first_pw <- c(sample(LETTERS, size=1),
+                sample(letters, size=1),
+                sample(numbers, size=1))
+  
+  if (special == TRUE) {
+    # include draws directly from the special characters to fill up the rest
+    first_pw <- c(first_pw, sample(specials, size = 1))
+    
+    pw <- c(first_pw, sample(all_symbols, size=length-length(first_pw)))
+    
+  } else {
+    # if there's rest, it is now drawn only from all standard symbols
+    pw <- c(first_pw, sample(all_symbols, size=length-length(first_pw)))
+    }
+  # Password Strength - nested ifelse - Conditions 5), 6), 7)
+  # Not really sure here, maybe typo in exercise? shouldn't it be >=6 &<10?
+  ifelse(length<6, print("Weak password!"),
+         ifelse(10>=length & length>=6, print("Moderate password!"),
+                print("Strong password!")))
+  # A final sample to mix up the order and extract spaces - Condition 8)
+  pw <- paste0(sample(pw, size=length(pw)), collapse="")
+  return(pw)
+}
+# Test function
+get_password(length=4, special=F)
+```
+
+#1. b) Test your function here for
+
+```{r}
+
+length = 7
+special = T
+# your function executed here
+get_password(length = length, special = special)
+
+length = 3
+special = T
+# your function executed here
+get_password(length = length, special = special)
+
+length = 4.5
+special = T
+# your function executed here
+get_password(length = length, special = special)
+
+length = 5
+special = F
+# your function executed here
+get_password(length = length, special = special)
+
+length = 50
+special = T
+# your function executed here
+get_password(length = length, special = special)
+```
+
+
+# 2. a) Excercise: Gamma vs. Normal distribution (3 points):
+
+In this exercise you need to demonstrate that if a random variable $X$ is ${\Gamma}$-distributed with shape parameter $a$ and scale parameter $b$, then for $a \to \infty$  $X \overset{d}{\rightarrow} \mathcal{N} (ab,ab^2)$ if $a > b$.
+
+To this end, write a function that samples and returns $N$ observations from the ${\Gamma}$ distribution with shape parameter $a$ and scale parameter $b$. The function's input shall be $a$, $b$ and N.
+
+```{r}
+# Inspect Gamma samples and plot vs. the limiting normal distribution
+N <- 5000
+a <- 1
+b <- 1
+breaks <- "Scott"
+# Create the Plot and compare the gamma samples with the limiting normal distribution
+get_gamma_vs_normal <- function(N, a, b, breaks){
+  gam_samp <- rgamma(n=N, shape=a, rate=b)  
+  x_ <- seq(min(gam_samp), max(gam_samp), length.out=length(gam_samp))
+  hist(gam_samp, probability=T, breaks=breaks,
+       main=sprintf("N: %s simulated random Gamma values for a: %s, b: %s", N, a, b),
+       xlab="x-values")
+  lines(x_, dnorm(x_, mean=a*b, sd=sqrt(a*b^2)), col="red")
+  legend("topright", legend=c("Norm PDF"), col=c("red"), lty=c(1), lwd = c(1))
+}
+get_gamma_vs_normal(N, a, b, breaks)
+```
+
+Plot the resulting observations from the ${\Gamma}$ distribution using histograms with Scott breaks for $a$ = c(1, 5, 10, 50, 100) and $b$ = 1, N = 5000 in a 3x2 plot window and add the respective limiting Normal density for comparison. Choose a meaningful title, label the axes and add a legend to your plot.
+
+```{r}
+a <- c(1, 5, 10, 50, 100, 10000)
+b <- 1
+breaks <- "Scott"
+N <- 5000
+
+get_gamma_normal_plot <- function(a, b, breaks, N) {
+  options(warn=-1)
+  # 3x2 plot
+  nf <- layout(matrix(c(1,2,3,4,5,6), ncol=2,nrow=3, TRUE),widths = c(1,1), heights=c(1,1,1))
+  par(mar = c(2,4,1,0) + 0.1)
+  for (a_ in a) {
+    gamma_sample <- rgamma(N, shape = a_, scale = b)
+    x <- seq(min(gamma_sample), max(gamma_sample), length.out = N)
+    # Plot Gamma values against limiting normal distribution given as Hint from the Task
+    norm_dist_pdf <- dnorm(x, mean = a_ * b, sd = sqrt(a_ * b^2))
+    
+    hist(gamma_sample, breaks = breaks, probability = TRUE,
+         main = sprintf("Gamma Samples (a:%s, b:%s) vs. Lim Normal Distribution", a_, b),
+         xlab = "x values", ylab = "Density", cex.main = 1)
+    lines(x = x, y = norm_dist_pdf, type = "l", col = "red")
+    # Additionally plot the mean of the Gamma and the normal distribution
+    abline(v=mean(gamma_sample), col="black", lwd=1)
+    abline(v=a_ * b, col="blue", lwd=1)
+    legend("topright",
+           legend = c("Norm PDF", "Mean Gamma", "Mean Norm"),
+           col = c("red", "black", "blue"),
+           lty = c(1, 1, 1),
+           lwd=c(1, 1, 1))
+  }
+  par(mfrow = c(1, 1))
+}
+
+get_gamma_normal_plot(a=a, b=b, breaks=breaks, N=N)
+```
+
+# 2. b) Slutsky's theorems
+
+Now assume that you observe $X_n \sim \Gamma(a,b)$ for $a = c(1, 5, 10, 50, 100)$ and $b = 1$ as well as $Y_n \sim \mathcal{N}\left(\mu, 4\sigma^2\sqrt{n^{-5}}\right)$ where $\mu = 3.5$ and $\sigma = 7$. Verify that following part of Slutsky's theorems holds with increasing values of $a$ : 2. $X_n \cdot Y_n \overset{d}{\rightarrow} X\cdot c$. Do this with the help of Monte Carlo simulations and a corresponding 3x2 plot window. Choose $N_{MC} = 1000$, $n = 1000$.
+Hint: Remember that $X \overset{d}{\rightarrow} \mathcal{N} (ab,ab^2)$ for increasing values of $a$.
+
+```{r}
+# Settings
+N_MC <- 1000
+n <- 1000
+a <- c(1, 5, 10, 50, 100, 10000)
+b <- 1
+mean_y <- 3.5
+sigma_y <- 7
+sd_y <- sqrt((4*sigma_y^2)*sqrt(n^-5))
+c <- mean_y
+# Theoretical Ideas:
+# The Normal distribution is related to the Gamma Distribution, so if we multiply something related to a normal distribution with something truly normal the result should be as well something normally distributed
+# By the Hint provided, that the X follows: $X \overset{d}{\rightarrow} \mathcal{N} (ab,ab^2)$ for increasing a, we can calculate at each a the needed parameters for the given distribution as it can be seen as a function of a and, respectively a constant b set to 1, but we must not forget to scale the limiting distribution accordingly by the constant c, which we can not choose arbitrarily. Since the X part is more or less the same on the left and right hand side, the only difference is the constant factor c on the right vs the distribution of Y on the left hand side, so this distribution has to be equal to the factor c in its limit, we assume that its converging in the long run towards its expected value what is the given value for mu which is 3.5, so c has to be equal to mu which is 3.5, this can be seen letting lim n->inf where the sd of Y converges towards 0 leaving only the of n independent mu as resulting value
+
+get_comp_plot <- function(a, b, c, n, N_MC, mean_y, sd_y){
+  # First simulate X and Y and combine them to one single factor
+  get_x_y_n <- function(a, b, n, N_MC){
+    # simulate N_MC * n values, N_MC runs of the size of n
+    gamma_samp <- matrix(rgamma(n=n * N_MC, shape=a, scale=b), ncol = N_MC)
+    normal_samp <- matrix(rnorm(n=n * N_MC, mean=mean_y, sd=sd_y), ncol = N_MC)
+    x_y_n <- gamma_samp * normal_samp
+    return(x_y_n)
+  }
+  # Next get the factor X*c
+  get_x_c <- function(a, b, c){
+    # From the given Hint we know that X follows a Normal(ab, ab^2) distribution
+    # which we have to change a little bit to also incorporate the constant factor c
+    # Here the number of simulations isnt playing a role since we only need the few fixed
+    # values for coputation
+    X_mean <- a*b
+    X_var <- a*b^2
+    # Here also slightly change the Hint by multiplying the mean with the constant c
+    # Orientation provides Programming Tutorial 5) Slutzkys Theorem
+    X_mu <- X_mean * c
+    # Here also slightly change the Hint by multiplying the sd with the constant c
+    # Orientation provides Programming Tutorial 5) Slutzkys Theorem
+    X_sigma <- sqrt(X_var) * abs(c)
+    # Add both parameters to one dataframe for ease of showing
+    x_c_df <- data.frame(matrix(NA, nrow = 1, ncol = 0))
+    x_c_df$X_mu <- X_mu
+    x_c_df$X_sigma <- X_sigma
+    return(x_c_df)
+  }
+  
+  # Now the loop trough the different as provided in the vector
+  nf <- layout(matrix(c(1,2,3,4,5,6), ncol=2,nrow=3, TRUE),widths = c(1,1), heights=c(1.5,1.5,1.5))
+  par(mar = c(2,4,1,0) + 0.1)
+  for(a_ in a){
+    # Draw the X_n and Y_n samples
+    x_y_n <- get_x_y_n(a=a_, b=b, n=n, N_MC=N_MC)
+    # Compute the part X*c for the a and b constellation
+    # constant c has to be the set MEAN
+    x_c <- get_x_c(a=a_, b=b, c=mean_y)
+  
+    # Compare by hist and density plot
+    hist(x_y_n, probability=T, xlab="x-values",
+         main=sprintf("Sim n:%s for N_MC:%s for a:%s and b:%s", n, N_MC, a_, b))
+    # Add the density of the Hint, limiting normal distribution along the x values
+    # with the specified parameters
+    x_ <- seq(from=min(x_y_n), to=max(x_y_n), length.out=n)
+    lines(x_, dnorm(x_, mean=x_c$X_mu, sd=x_c$X_sigma), col="red")
+    abline(v=x_c$X_mu, lwd=3)
+    legend("topright",
+           legend = c("Lim Norm PDF", "mu X*c"),
+           col = c("red", "black"),
+           lty = c(1, 1),
+           lwd=c(1,3))
+  }
+  par(mfrow = c(1, 1))
+}
+
+get_comp_plot(a, b, c, n, N_MC, mean_y, sd_y)
+```

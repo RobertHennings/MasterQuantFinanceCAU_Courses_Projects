@@ -1,0 +1,143 @@
+---
+title: "Solution 5"
+output: html_notebook
+---
+
+## Convergence in distribution
+### a)
+Binomial distribution for large n compared to a Poisson distribution (cf. Lecture 8, sl. 20).
+
+```{r}
+library(latex2exp)
+
+# Define parameters... check for n = 25,50,75,50
+p = 0.2
+n = seq(from = 25, to = 100, by = 25)
+
+par(mfrow=c(2, 2))
+
+for (i in 1:length(n)){
+x = seq(from = 0, to = 2*n[i]*p, by = 1)
+y = dpois(x, lambda = n[i]*p)
+y1 = dbinom(x, size = n[i], prob = p)
+plot(x,y, type="h", lwd=2, main = paste("Bin vs. Poi, n =", n[i], "p =", p),  xlab = "x", ylab="Probability mass", 
+     col = rgb(red=1, green=0,blue=0,alpha=0.5))
+lines(x, y1, lwd=2, col = rgb(red=0, green=1,blue=0,alpha=0.5), type = "h")
+legend("topright", c("Poisson","Binomial"), lty=1, col = c("red","green"), cex=0.5)
+}
+
+
+```
+
+
+### b)
+Student-t distribution with many degrees of freedom compared to a standard normal distribution (cf. Lecture 9, sl. ...).
+
+```{r}
+# Define parameters
+v = c(1:10)
+x = seq(from = -5, to = 5, by = 0.01)
+y = dnorm(x)
+color = rainbow(length(v))
+# Plot
+# Plot the standard normal density as a benchmark
+plot(x, y, type = "l", lwd = 2, main = NULL, xlab = "x", ylab = "Density", ylim = c(0, max(y)+0.1))
+
+# Plot the t distribution for increasing degrees of freedom
+for (i in 1:length(v)){
+  y1 = dt(x, df = v[i])
+  lines(x, y1, col = color[i])
+}
+# Add a legend
+legend("topright", paste(replicate(length(v), c("v =")), v), lwd = 2, col = color)
+
+```
+
+
+### c)
+Binomial distribution B(n, p) with large n compared to a Normal distribution (np(1-p) > 9 or n >= 100)
+
+
+```{r}
+# Define input parameters
+set.seed(123)
+n = c(10,20,50,100)
+p = 0.8
+
+par(mfrow=c(2, 2))
+for (i in 1:length(n)){
+x = seq(from = 0, to = 2*n[i]*p, by = 1)
+x1 = seq(from = 0, to = 2*n[i]*p, by = 0.1)
+y = dbinom(x, size = n[i], prob = p)
+y1 = dnorm(x, mean = n[i]*p, sd = sqrt(n[i]*p*(1-p) ) )
+plot(x,y, type="h", lwd=2, main = paste("Bin vs. Normal, n =", n[i], "p =", p),  xlab = "x", ylab="Mass/Density", 
+     col = "seagreen")
+lines(x1, dnorm(x1, mean = n[i]*p, sd = sqrt(n[i]*p*(1-p))), lwd = 2, col = "steelblue")
+}
+
+```
+
+ 
+
+## Slutsky's theorems
+Let $X_n \overset{d}{\rightarrow} X$ and $Y_n \overset{p}{\rightarrow} c$. Then,  
+1. $X_n + Y_n \overset{d}{\rightarrow} X + c$  
+2. $X_n \cdot Y_n \overset{d}{\rightarrow} X\cdot c$  
+3. $\frac{X_n}{Y_n}\overset{d}{\rightarrow} \frac{X}{c}$ if $P(Y_n=0)=0$ and $c\neq 0$.  
+
+Assume $X_n \sim \mathcal{N}\left(\mu+\frac{1}{n}, \sigma^2\right)$ and $Y_n \sim \mathcal{N}\left(\mu, \frac{\sigma^2}{n}\right)$ verify Slutsky's theorems with the help of Monte Carlo simulations. Choose $N_{MC} = 1000$, $n = 1000$.
+
+```{r}
+# 1.
+# Define test parameters
+mu = 5
+sigma = 2
+n = 1000
+N_MC = 1000
+
+# Draw a sample
+set.seed(123)
+X_n = rnorm(N_MC, mean = mu + 1/n, sd = sigma)
+Y_n = rnorm(N_MC, mean = mu, sd = 1/sqrt(n))
+sample = X_n + Y_n
+
+# Plot a histogram of X_n + Y_n
+H = hist(sample, breaks = "Scott", main = "X_n + Y_n", probability = T)
+
+# Plot the benchmark density for comparison
+x = seq(from = min(H$breaks), to = max(H$breaks), length.out = 100)
+lines(x, dnorm(x, mean = 2*mu, sd = sigma), col = "red", lwd = 2)
+```
+
+
+```{r}
+# 2.
+# Draw a sample
+sample = X_n * Y_n
+
+# Plot
+# Plot a histogram of X_n * Y_n
+H = hist(sample, breaks = "Scott", main = "X_n * Y_n", probability = T)
+
+# Plot the benchmark density for comparison
+x = seq(from = min(H$breaks), to = max(H$breaks), length.out = 100)
+lines(x, dnorm(x, mean = mu^2, sd = sigma*mu), col = "red", lwd = 2)
+```
+
+
+```{r}
+# 3.
+# Draw a sample
+sample = X_n/Y_n
+
+# Plot
+# Plot the histrogram of our sample X_n/Y_n
+H = hist(sample, breaks = "Scott", main = "X_n/Y_n", probability = T)
+
+# Plot the benchmark density for comparison
+x = seq(from = min(H$breaks), to = max(H$breaks), length.out = 100)
+lines(x, dnorm(x, mean = 1, sd = sigma/mu), col = "red", lwd = 2)
+```
+
+
+
