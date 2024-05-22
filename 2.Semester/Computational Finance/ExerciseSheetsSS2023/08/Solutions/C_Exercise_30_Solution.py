@@ -10,7 +10,7 @@ def Heston_EuCall_MC_Euler(S0, r, gamma0, kappa, lmbda, sigma_tilde, T, g, M, m)
     Delta_W1 = np.random.normal(0,math.sqrt(Delta_t), (M, m))
     Delta_W2 = np.random.normal(0, math.sqrt(Delta_t), (M, m))
 
-    #Initialize matrix which contains the process values
+    # Initialize matrix which contains the process values
     S = np.zeros((M, m+1))
     gamma = np.zeros((M, m+1))
 

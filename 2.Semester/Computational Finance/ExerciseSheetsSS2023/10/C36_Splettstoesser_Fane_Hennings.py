@@ -8,7 +8,26 @@ import matplotlib.pyplot as plt
 import scipy.stats
 
 # For Matrix inversion also include the TriagMatrix function from the previous sheet
-def TriagMatrix_Inversion(alpha, beta, gamma, b):
+def TriagMatrix_Inversion(alpha: np.array, beta: np.array, gamma: np.array, b: np.array) -> np.array:
+    """Inversion of tridiagonal matrices, values along the main diagonal
+       originate from alpha (main diag), beta (lower main diag), gamma (upper main diag),
+       these values are inside of the matrix A of the equation system:
+       A * x = b  that we want to solve
+
+    Args:
+        alpha (np.array): values along the main (inner) diagonal of the matrix
+        beta (np.array): values along the lower diagonal of the matrix
+        gamma (np.array): values along the upper diagonal of the matrix
+        b (np.array): target values in the equation system: A * x = b
+
+    Returns:
+        np.array: inverted matrix from the system: A * x = b
+    """
+    # Check for data types
+    for var in [alpha, beta, gamma, b]:
+        if not isinstance(var, np.array):
+            raise TypeError(f"{var} not type np.array")
+    # p.77-p.78
     # create the matrix
     n=len(alpha)
     alpha_hat=np.empty(n)
@@ -27,8 +46,28 @@ def TriagMatrix_Inversion(alpha, beta, gamma, b):
         x[i]= (1/alpha_hat[i])* (b_hat[i]-beta[i]*x[i+1])
     return x
 
-# For later compariosn also define the BSM formula
-def EuCall_BlackScholes(t, S_t, r, sigma, T, K):
+# For later comparison also define the BSM formula
+def EuCall_BlackScholes(t: int, S_t: float, r: float, sigma: float, T: int, K: float) -> float:
+    """Compute the fair, risk-neutral priced Black-Scholes-Merton option price
+
+    Args:
+        t (int): current discrete time period
+        S_t (float): current underlying value in t
+        r (float): fixed, constant (risk free) interest rate
+        sigma (float): fixed, constant volatility of the underlying
+        T (int): discrete maturity time of option
+        K (float): strike price of the option
+
+    Returns:
+        float: EU Call option price according to BSM
+    """
+    # Check for data types
+    for var in [S_t, r, sigma, K]:
+        if not isinstance(var, float):
+            raise TypeError(f"{var} not type float")
+    for var in [t, T]:
+        if not isinstance(var, int):
+            raise TypeError(f"{var} not type int")
     d_1 = (np.log(S_t / K) + (r + 1 / 2 * math.pow(sigma, 2)) * (T - t)) / (sigma * math.sqrt(T - t))
     d_2 = d_1 - sigma * math.sqrt(T - t)
     Call = S_t * scipy.stats.norm.cdf(d_1) - K * math.exp(-r * (T - t)) * scipy.stats.norm.cdf(d_2)
@@ -37,7 +76,8 @@ def EuCall_BlackScholes(t, S_t, r, sigma, T, K):
 
 # C-Exercise 36
 # Valuation of a European Call using the Crank-Nicolsen finite difference scheme
-def BS_EuCall_FiDi_CN(r: float, sigma: float, a: float, b: float, m: int, nu_max: float, T: int, K: float) -> float:
+def BS_EuCall_FiDi_CN(r: float, sigma: float, a: float, b: float, m: int,
+                      nu_max: float, T: int, K: float) -> float:
     # compute all the static values first as given in the lecture notes
     # see p.65 and p.66 for the algorithm as pseudo code
     q = (2 * r) / (sigma**2)
@@ -107,9 +147,10 @@ f, (ax1, ax2) = plt.subplots(2, 1)
 ax1.plot(BS_EUCallFiDi_results[1], color="#603086", label="FiDi")
 ax1.plot(V0_BSM, color="black", label="BSM")
 ax1.set_title("EU Call: Finite Difference approach vs. BSM Formula")
-ax1.xlabel("Initial Stock prices")
-ax1.ylabel("Option prices")
+ax1.set_ylabel("Option prices")
 ax1.legend()
 ax2.plot(BS_EUCallFiDi_results[1] - V0_BSM, color="grey")
+ax2.set_ylabel("Error: FiDi-BSM")
+ax2.set_xlabel("Initial Stock prices")
 ax2.set_title("Error")
 plt.show()

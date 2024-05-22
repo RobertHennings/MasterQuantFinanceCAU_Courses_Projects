@@ -8,7 +8,31 @@ from scipy.stats import norm
 # Calculating the Delta/Hedge of a European option via MC methods, infinitesimal perturbation
 # Calcuate the Hedging Position phi1_t
 
-def EuOptionHedge_BS_MC_IP(St: float, r: float, sigma: float, g: callable, T: int, t: int, N: int, seed: int, set_seed: bool) -> float:
+def EuOptionHedge_BS_MC_IP(St: float, r: float, sigma: float,
+                           g: callable, T: int, t: int, N: int,
+                           seed: int, set_seed: bool) -> float:
+    """_summary_
+
+    Args:
+        St (float): Current underlying (stock) price
+        r (float): Interest rate
+        sigma (float): Volatility
+        g (callable): payoff function (call or put)
+        T (int): Time Horizon
+        t (int): Current time step
+        N (int): _description_
+        seed (int): Seed for reproducability
+        set_seed (bool): Indicate if reproducability desired for comparison
+
+    Raises:
+        TypeError: Check for datatype float
+        TypeError: Check for datatype int
+        TypeError: Check for datatype bool
+
+    Returns:
+        float: Delta/Hedge position of a European option via MC methods,
+               infinitesimal perturbation
+    """
     # start of by creating the values and empty matrices
     # need N standard normally distributed random variables, see page 52 for the specification of X
     # Check for Data type
@@ -50,13 +74,33 @@ N = 10000
 seed = 33
 set_seed = True
 # Define the given payoff function g(x)
-g = lambda x: np.maximum(0, x-90) # strike K = 90
-K = 90.0
+K = 90.0 # strike K = 90
+g = lambda x: np.maximum(0, x-K )
 phi1_t = EuOptionHedge_BS_MC_IP (St=S0, r=r, sigma=sigma, g=g, T=T, t=t, N=N, seed=seed, set_seed=True)
 # 0.8176244641920389
 #Compare the implemented version against the formula 30 from page 40
 def phi1_t_comp(St: float, r: float, sigma: float, T: int, t: int, K: float) -> float:
-    # Just code the formula 30 from page 40
+    """Just code the formula 30 from page 40 for deriving the hedging position
+
+    Args:
+        St (float): Current underlying (stock) price
+        r (float): Interest rate
+        sigma (float): Volatility
+        T (int): Time Horizon
+        t (int): Current time step
+        K (float): Strike price of the option
+
+    Returns:
+        float: Delta-Hedging position
+    """
+    # Check for Data type
+    for var in [r, sigma, St, K]:
+        if not isinstance(var, float):
+            raise TypeError(f"{var} not type float")
+    for var in [T, t]:
+        if not isinstance(var, int):
+            raise TypeError(f"{var} not type int")
+
     phi1_t_ = norm.cdf((np.log(St / K) + r * (T-t) + ((sigma**2) / 2) * (T-t)) / (sigma * np.sqrt((T-t))), loc=0, scale=1)
 
     return phi1_t_

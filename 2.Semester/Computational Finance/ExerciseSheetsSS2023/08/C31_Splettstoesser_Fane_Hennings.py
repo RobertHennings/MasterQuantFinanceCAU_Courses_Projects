@@ -7,11 +7,31 @@ import matplotlib.pyplot as plt
 # Simulating paths of geometric Brownian motion
 
 def Sim_Paths_GeoBM(X0: float, mu: float, sigma: float, T: int, N: int) -> list:
-    # simulates the discrete path approximation via three methods:
-    # 1) exact solution for the geometric Brownian motion SDE
-    # 2) Euler method
-    # 3) Milshtein method
+    """simulates the discrete path approximation via three methods:
+        1) exact solution for the geometric Brownian motion SDE
+        2) Euler method
+        3) Milshtein method
 
+    Args:
+        X0 (float): Starting value of the paths
+        mu (float): Long Term average of the process
+        sigma (float): Drift of the process
+        T (int): Time Horizon (1 discretized period)
+        N (int): Number of Time Steps for discretization
+
+    Returns:
+        list: Simulated process values for:
+              1) exact solution for the geometric Brownian motion SDE
+              2) Euler method
+              3) Milshtein method
+    """
+    # Check for datatype
+    for var in [X0, mu, sigma]:
+        if not isinstance(var, float):
+            raise TypeError(f"{var} not type float")
+    for var in [T, N]:
+        if not isinstance(var, int):
+            raise TypeError(f"{var} not type int")
     # Initialise delta_t and the random normal values
     delta_t = T / N
     # random values for delta_w according to the algo on page no.55
@@ -20,7 +40,7 @@ def Sim_Paths_GeoBM(X0: float, mu: float, sigma: float, T: int, N: int) -> list:
     # Set up matrices to save the computed values
     X_exact_mat = np.zeros(N)
     X_euler_mat = np.zeros(N)
-    X_milshtein_mat = np.zeros(N) 
+    X_milshtein_mat = np.zeros(N)
 
     # Compute the values in a loop
     # First start the matrices with initial value

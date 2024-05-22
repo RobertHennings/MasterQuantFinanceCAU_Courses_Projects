@@ -8,7 +8,37 @@ import pandas as pd
 # C-Exercise 30
 # Valuation of European options in the Heston model using the Euler method
 
-def Heston_EuCall_MC_Euler(S0, r, gamma_0, kappa, lambda_, sigma, T, g, M, m) -> list:
+def Heston_EuCall_MC_Euler(S0: float, r: float, gamma_0: float,
+                           kappa: float, lambda_: float, sigma: float,
+                           T: int, g: callable, M: int, m: int) -> list:
+    """Fair value of European options in the Heston model via the
+       Monte-Carlo method using M samples together with the
+       95%- confidence interval. Paths are approximated by the
+       Euler method with a grid of m equidistant points in time.
+
+    Args:
+        S0 (float): Initial underlying (stock) price
+        r (float): Interest rate
+        gamma_0 (float): _description_
+        kappa (float): _description_
+        lambda_ (float): _description_
+        sigma (float): Volatility
+        T (int): Time Horizon
+        g (callable): payoff function (call or put)
+        M (int): Number of simulations
+        m (int): _description_
+
+    Returns:
+        list: Fair value of European option, upper and lower
+              95%-confidence bound
+    """
+    # Check for datatype
+    for var in [r, sigma, S0, gamma_0, kappa, lambda_]:
+        if not isinstance(var, float):
+            raise TypeError(f"{var} not type float")
+    for var in [T, M, m]:
+        if not isinstance(var, int):
+            raise TypeError(f"{var} not type int")
     # approximate the paths by the Euler method, see the defined algorithm on page 54, 55 in the script
     # Recall the Heston model assumes time variant volatility
     # Initalize the time delta steps
@@ -51,18 +81,18 @@ def Heston_EuCall_MC_Euler(S0, r, gamma_0, kappa, lambda_, sigma, T, g, M, m) ->
 
 
 # Test the function for given parameters
-S0 = 100
+S0 = 100.0
 r = 0.05
 gamma_0 = 0.2**2
 kappa = 0.5
 lambda_ = 2.5
-sigma = 1
+sigma = 1.0
 T = 1
-g = lambda x: np.maximum(x - 100, 0)
+K = 100.0
+g = lambda x: np.maximum(x-K, 0) # Call Option
 M = 10000
 m = 250
 
-Heston_EuCall_MC_Euler(S0, r, gamma_0, kappa, lambda_, sigma, T, g, M, m)
-
-
-pd.Series(value_mat>0).value_counts()
+V_0, C_l, C_U = Heston_EuCall_MC_Euler(S0=S0, r=r, gamma_0=gamma_0, kappa=kappa,
+                                       lambda_=lambda_, sigma=sigma, T=T, g=g, M=M, m=m)
+print(f"Fair value of a european option (Call) with strike: {K} using the Euler Method: {V_0} with lower 95%-confidence bound: {C_l} and upper 95%-confidence bound: {C_U}")

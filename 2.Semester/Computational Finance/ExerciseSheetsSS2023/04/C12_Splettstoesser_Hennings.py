@@ -60,7 +60,16 @@ def BS_EuCall_MC_IS(S0: float, r: float, sigma: float, K: float, T: int, mu: flo
     Y = np.random.normal(loc=mu, scale=1, size=N)
 
     # Define the Call function from C10 from sheet 03
-    def f(x, K):
+    def f(x: float, K: float) -> float:
+        """Simple payoff function of a call function
+
+        Args:
+            x (float): current underlying price
+            K (float): strike price of the option
+
+        Returns:
+            float: current call payoff
+        """
         return np.maximum(x-K, 0)
     # Compute terminal stock price based on simulated Ys, apply slight modifications
     S_T = np.zeros(N)
@@ -86,7 +95,20 @@ BS_EuCall_MC_IS(S0, r, sigma, K, T, mu, N, alpha, seed, set_seed)
 
 
 # Compare with the BSM price from Exercise Sheet 02, EU Call
-def BlackScholes_EuCall(t, S_t, r, sigma, T, K):
+def BlackScholes_EuCall(t: int, S_t: float, r: float, sigma: float, T: int, K: float) -> float:
+    """Compute the fair, risk-neutral priced Black-Scholes-Merton option price
+
+    Args:
+        t (int): current discrete time period
+        S_t (float): current underlying value in t
+        r (float): fixed, constant (risk free) interest rate
+        sigma (float): fixed, constant volatility of the underlying
+        T (int): discrete maturity time of option
+        K (float): strike price of the option
+
+    Returns:
+        float: EU Call option price according to BSM
+    """
     # Compute static values first
     # Compute d1 and d2
     d1 = (np.log(S_t/K) + (((sigma**2)/2)+r) * (T-t)) / (sigma * (np.sqrt(T-t)))

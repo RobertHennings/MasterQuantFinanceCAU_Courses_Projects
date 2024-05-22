@@ -40,7 +40,16 @@ def BS_EuOption_MC_CV(S0: float, r: float, sigma: float, T: int, K: float, M: in
     # Finally we want to compute the estimator V_CV according to formula on page 19 in the script
 
     # Implemet the normal EU Call payoff function
-    def f(x, K):
+    def f(x: float, K: float) -> float:
+        """Simple payoff function of a call function
+
+        Args:
+            x (float): current underlying price
+            K (float): strike price of the option
+
+        Returns:
+            float: current call payoff
+        """
         return np.maximum(x-K, 0)
     # Therefore simulate two random variables X as before and Y additionally
     # one for each Option type, both follow the same law: (X_n, Y_n)
@@ -126,7 +135,16 @@ M = 100000
 seed = 567
 set_seed = True
 # For the normal simulation
-def f(x, K):
+def f(x: float, K: float) -> float:
+    """Simple payoff function of a call function
+
+    Args:
+        x (float): current underlying price
+        K (float): strike price of the option
+
+    Returns:
+        float: current call payoff
+    """
     return np.maximum(x-K, 0)
 
 

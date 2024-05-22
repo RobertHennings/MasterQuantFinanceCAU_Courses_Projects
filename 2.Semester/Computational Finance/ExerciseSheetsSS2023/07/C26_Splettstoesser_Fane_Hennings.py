@@ -7,6 +7,23 @@ import matplotlib.pyplot as plt
 # Simulate an American Option with payoff defined on Sheet 06 in T20 b)
 
 def CRR_AmOption(S_0: float, T: int, M: int, r: float, sigma: float) -> float:
+    """Computing the fair value of an american option by using the CRR model
+       as approximation for the BSM formula
+
+    Args:
+        S_0 (float): Initial underlying (stock) price
+        T (int): Time Horizon
+        M (int): Number of simulations for the CRR model
+        r (float): Interest rate
+        sigma (float): Volatility
+
+    Raises:
+        TypeError: Check float arguments
+        TypeError: Check int arguments
+
+    Returns:
+        float: Initial Option Value V0 (American, using CRR)
+    """
     # Check for Data type
     for var in [r, sigma, S_0]:
         if not isinstance(var, float):
@@ -44,6 +61,15 @@ def CRR_AmOption(S_0: float, T: int, M: int, r: float, sigma: float) -> float:
 
 # For comparison also implement the second formula from Sheet 06 T20 b) which directly computes the the option value at any given time t
 def CRR_AmOptionDirect(S_0: float, T: int) -> float:
+    """Computes directly (without simulation) the fair initial price
+
+    Args:
+        S_0 (float): Initial underlying (stock) price
+        T (int): Time Horizon
+
+    Returns:
+        float: Initial Option Value V0 (American, using CRR)
+    """
     # Question: How does the stock price evolve? -> Not necessary here to model as general form
     # Set t=0
     t = 0
